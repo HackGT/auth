@@ -1,0 +1,40 @@
+{
+	"secrets": {
+		"session": "",
+		"github": {
+			"id": "",
+			"secret": ""
+		},
+		"google": {
+			"id": "",
+			"secret": ""
+		},
+		"facebook": {
+			"id": "",
+			"secret": ""
+		}
+	},
+	"email": {
+		"from": "",
+		"host": "",
+		"username": "",
+		"password": "",
+		"port": 465
+	},
+	"server": {
+		"isProduction": true,
+		"port": 3000,
+		"cookieMaxAge": 15552000000,
+		"cookieSecureOnly": true,
+		"passwordResetExpiration": 3600000
+	},
+	"admins": ["example@example.com"],
+	"eventName": "My Hackathon",
+	"storageEngine": {
+		"name": "disk",
+		"options": {
+			"uploadDirectory": "uploads"
+		}
+	},
+	"maxTeamSize": 4
+}
