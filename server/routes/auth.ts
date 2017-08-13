@@ -391,7 +391,11 @@ function addAuthenticationRoute(serviceName: "github" | "google" | "facebook", s
 		const cookieDomain = host === "localhost" ? host : "." + host;
 		response.cookie("sso-auth", request.sessionID, cookie_opts(cookieDomain));
 		response.clearCookie("callback");
-		response.redirect(callback);
+		if (callback) {
+			response.redirect(callback);
+		} else {
+			response.redirect("/success");
+		}
 	});
 }
 

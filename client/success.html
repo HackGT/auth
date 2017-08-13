@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Login Successful! - {{siteTitle}}</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="/css/wing-0.1.9.min.css" />
+		<link rel="stylesheet" href="/css/theme.css" />
+	</head>
+	<body>
+		<div class="container">
+			<h1 class="center">{{siteTitle}}</h1>
+
+			<h3 class="center">Login Successful!</h3>
+			<p class="center">
+				If you'd like to log out, follow the button below:
+			</p>
+            <form action="/logout" method="GET" class="center">
+                <input type="submit" value="Logout" />
+            </form>
+		</div>
+	</body>
+</html>

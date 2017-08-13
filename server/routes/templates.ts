@@ -21,12 +21,14 @@ let [
 	loginTemplate,
 	forgotPasswordTemplate,
 	resetPasswordTemplate,
-	unsupportedTemplate
+	unsupportedTemplate,
+	successTemplate
 ] = [
 	"login.html",
 	"forgotpassword.html",
 	"resetpassword.html",
-	"unsupported.html"
+	"unsupported.html",
+	"success.html"
 ].map(file => {
 	let data = fs.readFileSync(path.resolve(STATIC_ROOT, file), "utf8");
 	return Handlebars.compile(data);
@@ -57,6 +59,10 @@ templateRoutes.use(async (request, response, next) => {
 });
 
 templateRoutes.route("/login").get((request, response) => {
+	if (request.isAuthenticated()) {
+		response.redirect("/success");
+	}
+
 	let templateData: ILoginTemplate = {
 		siteTitle: config.eventName,
 		error: request.flash("error"),
@@ -68,6 +74,22 @@ templateRoutes.route("/login").get((request, response) => {
 		response.cookie("callback", callback, COOKIE_OPTIONS);
 	}
 	response.send(loginTemplate(templateData));
+});
+templateRoutes.route("/logout").get((request, response) => {
+	response.clearCookie("sso-auth");
+
+	if (request.session) {
+		request.session.destroy(() => {
+			response.redirect("/login");
+		});
+	} else {
+		response.redirect("/login");
+	}
+});
+templateRoutes.route("/success").get((request, response) => {
+	response.send(successTemplate({
+		siteTitle: config.eventName
+	}));
 });
 templateRoutes.route("/").get((request, response) => {
 	response.redirect("/login");
