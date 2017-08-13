@@ -10,6 +10,11 @@ function safe_parse(json: string): any {
 	}
 }
 
+export function logout(params: undefined, request: express.Request): string {
+	const proto = request.secure ? "https" : "http";
+	return `${proto}://${request.headers.host}/logout`;
+}
+
 export function authenticate(
 	params: { callback: string },
 	request: express.Request

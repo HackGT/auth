@@ -1,6 +1,7 @@
 interface Auth {
   user(token: ID): User
   authenticate(callback: String): String!
+  logout: String!
 }
 
 type User {
@@ -13,6 +14,7 @@ type User {
 type Query implements Auth {
   user(token: ID): User
   authenticate(callback: String): String!
+  logout: String!
 }
 
 schema {
