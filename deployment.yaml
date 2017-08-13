@@ -14,7 +14,6 @@ secrets:
   - GITHUB_CLIENT_SECRET
   - FACEBOOK_CLIENT_ID
   - FACEBOOK_CLIENT_SECRET
-  - STORAGE_ENGINE_OPTIONS
 
 env:
   COOKIE_SECURE_ONLY: true
@@ -23,12 +22,4 @@ env:
   EMAIL_PORT: 465
   PRODUCTION: true
   EVENT_NAME: "HackGT 4: New Heights"
-  ADMIN_EMAILS:
-    - petschekr@gmail.com
-    - a@andrewdai.co
-    - faizan.virani.44@gmail.com
-    - lesurasani@gmail.com
-    - arshiya.singh16@gmail.com
-    - ajoshi97@gatech.edu
-    - ehsanmasdar@gmail.com
 
