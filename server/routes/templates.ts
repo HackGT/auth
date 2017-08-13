@@ -7,7 +7,8 @@ import * as bowser from "bowser";
 import {
 	STATIC_ROOT,
 	COOKIE_OPTIONS,
-	config
+	config,
+	all_host_cookie_opts
 } from "../common";
 import {
 	User,
@@ -76,7 +77,7 @@ templateRoutes.route("/login").get((request, response) => {
 	response.send(loginTemplate(templateData));
 });
 templateRoutes.route("/logout").get((request, response) => {
-	response.clearCookie("sso-auth");
+	response.clearCookie("sso-auth", all_host_cookie_opts(request.hostname));
 
 	if (request.session) {
 		request.session.destroy(() => {
