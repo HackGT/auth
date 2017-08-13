@@ -207,6 +207,12 @@ export function cookie_opts(domain?: string) {
 	return base;
 }
 
+export function all_host_cookie_opts(hostname: string): any {
+	const host = hostname.split(":")[0].split(".").slice(-2).join(".");
+	const cookieDomain = host === "localhost" ? host : "." + host;
+	return cookie_opts(cookieDomain);
+}
+
 //
 // Constants
 //

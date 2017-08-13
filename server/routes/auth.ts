@@ -12,7 +12,7 @@ import * as passport from "passport";
 import {
 	config, mongoose, COOKIE_OPTIONS, pbkdf2Async, postParser,
 	renderEmailHTML, renderEmailText, sendMailAsync, trackEvent,
-	cookie_opts
+	all_host_cookie_opts
 } from "../common";
 import {
 	IUser, IUserMongoose, User
@@ -226,14 +226,6 @@ passport.use(new LocalStrategy({
 			"googleData": {},
 			"facebookData": {},
 
-			"applied": false,
-			"accepted": false,
-			"acceptedEmailSent": false,
-			"attending": false,
-			"applicationData": [],
-			"applicationStartTime": undefined,
-			"applicationSubmitTime": undefined,
-
 			"admin": isAdmin
 		});
 		try {
@@ -370,6 +362,19 @@ function createLink(request: express.Request, link: string): string {
 	}
 }
 
+function setSsoCookie(request: express.Request, response: express.Response) {
+	// Successful authentication, redirect home
+	const callback = request.cookies.callback;
+	const cookieOpts = all_host_cookie_opts(request.hostname);
+	response.cookie("sso-auth", request.sessionID, cookieOpts);
+	response.clearCookie("callback");
+	if (callback) {
+		response.redirect(callback);
+	} else {
+		response.redirect("/success");
+	}
+}
+
 function addAuthenticationRoute(serviceName: "github" | "google" | "facebook", scope: string[], callbackHref: string) {
 	authRoutes.get(`/${serviceName}`, validateAndCacheHostName, (request, response, next) => {
 		let callbackURL = `${request.protocol}://${request.hostname}:${getExternalPort(request)}/${callbackHref}`;
@@ -378,25 +383,18 @@ function addAuthenticationRoute(serviceName: "github" | "google" | "facebook", s
 			{ scope, callbackURL } as passport.AuthenticateOptions
 		)(request, response, next);
 	});
-	authRoutes.get(`/${serviceName}/callback`, validateAndCacheHostName, (request, response, next) => {
-		let callbackURL = `${request.protocol}://${request.hostname}:${getExternalPort(request)}/${callbackHref}`;
-		passport.authenticate(
-			serviceName,
-			{ failureRedirect: "/login", failureFlash: true, callbackURL } as passport.AuthenticateOptions
-		)(request, response, next);
-	}, (request, response) => {
-		// Successful authentication, redirect home
-		const callback = request.cookies.callback;
-		const host = request.hostname.split(":")[0].split(".").slice(-2).join(".");
-		const cookieDomain = host === "localhost" ? host : "." + host;
-		response.cookie("sso-auth", request.sessionID, cookie_opts(cookieDomain));
-		response.clearCookie("callback");
-		if (callback) {
-			response.redirect(callback);
-		} else {
-			response.redirect("/success");
-		}
-	});
+	authRoutes.get(
+		`/${serviceName}/callback`,
+		validateAndCacheHostName,
+		(request, response, next) => {
+			let callbackURL = `${request.protocol}://${request.hostname}:${getExternalPort(request)}/${callbackHref}`;
+			passport.authenticate(
+				serviceName,
+				{ failureRedirect: "/login", failureFlash: true, callbackURL } as passport.AuthenticateOptions
+			)(request, response, next);
+		},
+		setSsoCookie
+	);
 }
 
 addAuthenticationRoute("github", ["user:email"], GITHUB_CALLBACK_HREF);
@@ -410,7 +408,15 @@ authRoutes.post("/signup", validateAndCacheHostName, postParser, passport.authen
 	response.redirect("/login");
 });
 
-authRoutes.post("/login", postParser, passport.authenticate("local", { failureRedirect: "/login", failureFlash: true, successRedirect: "/" }));
+authRoutes.post(
+	"/login",
+	postParser,
+	passport.authenticate("local", {
+		failureRedirect: "/login",
+		failureFlash: true
+	}),
+	setSsoCookie
+	);
 
 authRoutes.get("/verify/:code", async (request, response) => {
 	let user = await User.findOne({ "localData.verificationCode": request.params.code });
