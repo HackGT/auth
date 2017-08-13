@@ -95,7 +95,7 @@
         "no-angle-bracket-type-assertion": true,
         "no-boolean-literal-compare": true,
         "no-consecutive-blank-lines": [
-            true,
+            false,
             1
         ],
         "no-trailing-whitespace": true,

@@ -127,6 +127,33 @@ export const Setting = mongoose.model<ISettingMongoose>("Setting", new mongoose.
 	value: mongoose.Schema.Types.Mixed
 }));
 
+export interface ISession {
+	_id: string;
+	session: string;
+	expires: Date;
+	lastModified: Date;
+}
+export type ISessionMongoose = ISession & mongoose.Document;
+
+export const Session = mongoose.model<ISessionMongoose>("Session", new mongoose.Schema({
+	_id: {
+		type: String,
+		required: true,
+		unique: true
+	},
+	session: {
+		type: String,
+		required: true
+	},
+	expires: {
+		type: Date,
+		required: true
+	},
+	lastModified: {
+		type: Date
+	}
+}));
+
 // Handlebars templates
 export interface ICommonTemplate {
 	siteTitle: string;

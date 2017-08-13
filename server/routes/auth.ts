@@ -291,7 +291,7 @@ app.use(passport.session());
 
 export let authRoutes = express.Router();
 
-function getExternalPort(request: express.Request): number {
+export function getExternalPort(request: express.Request): number {
 	function defaultPort(): number {
 		// Default ports for HTTP and HTTPS
 		return request.protocol === "http" ? 80 : 443;
@@ -312,8 +312,10 @@ function getExternalPort(request: express.Request): number {
 		return defaultPort();
 	}
 }
+
 let validatedHostNames: string[] = [];
-function validateAndCacheHostName(request: express.Request, response: express.Response, next: express.NextFunction) {
+
+export function validateAndCacheHostName(request: express.Request, response: express.Response, next: express.NextFunction) {
 	// Basically checks to see if the server behind the hostname has the same session key by HMACing a random nonce
 	if (validatedHostNames.find(hostname => hostname === request.hostname)) {
 		next();

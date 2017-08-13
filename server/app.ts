@@ -1,16 +1,23 @@
 import * as path from "path";
+import * as fs from "fs";
 
 import * as express from "express";
+import * as graphql from "express-graphql";
 import * as serveStatic from "serve-static";
 import * as compression from "compression";
 import * as cookieParser from "cookie-parser";
 import * as morgan from "morgan";
+import { buildSchema } from "graphql";
 import flash = require("connect-flash");
 
 import {
 	// Constants
 	PORT, STATIC_ROOT, VERSION_NUMBER, VERSION_HASH, COOKIE_OPTIONS
 } from "./common";
+
+// Import { validateAndCacheHostName } from "./routes/auth";
+
+import * as graphql_root from "./api/api";
 
 // Set up Express and its middleware
 export let app = express();
@@ -34,6 +41,18 @@ app.route("/version").get((request, response) => {
 		"node": process.version
 	});
 });
+
+
+//
+// GraphQL API
+//
+const schema = buildSchema(fs.readFileSync(
+	path.resolve(__dirname, "./api/api.graphql"), "utf8"));
+app.use("/graphql", graphql({
+	schema,
+	rootValue: graphql_root,
+	graphiql: true
+}));
 
 app.use("/node_modules", serveStatic(path.resolve(__dirname, "../node_modules")));
 app.use("/js", serveStatic(path.resolve(STATIC_ROOT, "js")));

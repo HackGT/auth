@@ -1,0 +1,20 @@
+interface Auth {
+  user(token: ID): User
+  authenticate(callback: String): String!
+}
+
+type User {
+  id: ID!
+  email: String!
+  email_verified: Boolean!
+  name: String
+}
+
+type Query implements Auth {
+  user(token: ID): User
+  authenticate(callback: String): String!
+}
+
+schema {
+  query: Query
+}
