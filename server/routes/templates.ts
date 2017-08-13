@@ -60,7 +60,8 @@ templateRoutes.use(async (request, response, next) => {
 });
 
 templateRoutes.route("/login").get((request, response) => {
-	if (request.isAuthenticated()) {
+	const ssoAuth = request.cookies["sso-auth"];
+	if (request.isAuthenticated() && ssoAuth === request.sessionID) {
 		response.redirect("/success");
 	}
 
