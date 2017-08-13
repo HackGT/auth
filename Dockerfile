@@ -9,8 +9,8 @@ RUN apk add git
 RUN npm install npm@"~5.3.0" && rm -rf /usr/local/lib/node_modules && mv node_modules /usr/local/lib
 
 # Bundle app source
-WORKDIR /usr/src/registration
-COPY . /usr/src/registration
+WORKDIR /usr/src/auth
+COPY . /usr/src/auth
 RUN npm install
 RUN npm run build
 

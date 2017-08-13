@@ -40,5 +40,5 @@ app.use("/js", serveStatic(path.resolve(STATIC_ROOT, "js")));
 app.use("/css", serveStatic(path.resolve(STATIC_ROOT, "css")));
 
 app.listen(PORT, () => {
-	console.log(`Registration system v${VERSION_NUMBER} @ ${VERSION_HASH} started on port ${PORT}`);
+	console.log(`Auth system v${VERSION_NUMBER} @ ${VERSION_HASH} started on port ${PORT}`);
 });
