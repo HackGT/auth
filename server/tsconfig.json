@@ -26,9 +26,5 @@
 			}
         ],
         "moduleResolution": "node"
-    },
-    "exclude": [
-        "../node_modules/@types/whatwg-fetch/index.d.ts",
-        "../node_modules/@types/whatwg-streams/index.d.ts"
-    ]
+    }
 }
