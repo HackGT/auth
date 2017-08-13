@@ -6,7 +6,7 @@ import * as bowser from "bowser";
 
 import {
 	STATIC_ROOT,
-    COOKIE_OPTIONS,
+	COOKIE_OPTIONS,
 	config
 } from "../common";
 import {
@@ -64,9 +64,9 @@ templateRoutes.route("/login").get((request, response) => {
 	};
 
 	const callback = request.query.callback;
-    if (callback) {
-        response.cookie("callback", callback, COOKIE_OPTIONS);
-    }
+	if (callback) {
+		response.cookie("callback", callback, COOKIE_OPTIONS);
+	}
 	response.send(loginTemplate(templateData));
 });
 templateRoutes.route("/").get((request, response) => {

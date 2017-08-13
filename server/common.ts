@@ -188,6 +188,25 @@ class Config implements IConfig.Main {
 }
 export let config = new Config();
 
+export function cookie_opts(domain?: string) {
+	let base: {
+		path: string;
+		maxAge: number;
+		secure: boolean;
+		httpOnly: boolean;
+		domain?: string;
+	} = {
+		path: "/",
+		maxAge: config.server.cookieMaxAge,
+		secure: config.server.cookieSecureOnly,
+		httpOnly: true
+	};
+	if (domain) {
+		base.domain = domain;
+	}
+	return base;
+}
+
 //
 // Constants
 //
@@ -195,12 +214,7 @@ export const PORT = config.server.port;
 export const STATIC_ROOT = path.resolve(__dirname, "../client");
 export const VERSION_NUMBER = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../package.json"), "utf8")).version;
 export const VERSION_HASH = config.server.versionHash;
-export const COOKIE_OPTIONS = {
-	"path": "/",
-	"maxAge": config.server.cookieMaxAge,
-	"secure": config.server.cookieSecureOnly,
-	"httpOnly": true
-};
+export const COOKIE_OPTIONS = cookie_opts();
 
 //
 // Database connection

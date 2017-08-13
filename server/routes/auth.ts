@@ -10,7 +10,9 @@ const MongoStore = connectMongo(session);
 import * as passport from "passport";
 
 import {
-	config, mongoose, COOKIE_OPTIONS, pbkdf2Async, postParser, renderEmailHTML, renderEmailText, sendMailAsync, trackEvent
+	config, mongoose, COOKIE_OPTIONS, pbkdf2Async, postParser,
+	renderEmailHTML, renderEmailText, sendMailAsync, trackEvent,
+	cookie_opts
 } from "../common";
 import {
 	IUser, IUserMongoose, User
@@ -382,8 +384,12 @@ function addAuthenticationRoute(serviceName: "github" | "google" | "facebook", s
 		)(request, response, next);
 	}, (request, response) => {
 		// Successful authentication, redirect home
-        console.log('auth success', request);
-		response.redirect(request.cookies.callback);
+		const callback = request.cookies.callback;
+		const host = request.hostname.split(":")[0].split(".").slice(-2).join(".");
+		const cookieDomain = host === "localhost" ? host : "." + host;
+		response.cookie("sso-auth", request.sessionID, cookie_opts(cookieDomain));
+		response.clearCookie("callback");
+		response.redirect(callback);
 	});
 }
 
