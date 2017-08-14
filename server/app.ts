@@ -12,10 +12,11 @@ import flash = require("connect-flash");
 
 import {
 	// Constants
-	PORT, STATIC_ROOT, VERSION_NUMBER, VERSION_HASH, COOKIE_OPTIONS
+	PORT, STATIC_ROOT, VERSION_NUMBER, VERSION_HASH, COOKIE_OPTIONS,
+	config
 } from "./common";
 
-// Import { validateAndCacheHostName } from "./routes/auth";
+import { User } from "./schema";
 
 import * as graphql_root from "./api/api";
 
@@ -53,6 +54,16 @@ app.use("/graphql", graphql({
 	rootValue: graphql_root,
 	graphiql: true
 }));
+
+
+/// Update admins based on email
+config.admins.forEach(async (email) => {
+	const result = await User.update({ email }, { admin: true });
+	if (result.nModified > 0) {
+		console.log(`Adding new admin: ${email}`);
+	}
+});
+
 
 app.use("/node_modules", serveStatic(path.resolve(__dirname, "../node_modules")));
 app.use("/js", serveStatic(path.resolve(STATIC_ROOT, "js")));

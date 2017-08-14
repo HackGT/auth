@@ -118,13 +118,6 @@ function useLoginStrategy(strategy: any, dataFieldName: "githubData" | "googleDa
 				"googleData": {},
 				"facebookData": {},
 
-				"applied": false,
-				"accepted": false,
-				"attending": false,
-				"applicationData": [],
-				"applicationStartTime": undefined,
-				"applicationSubmitTime": undefined,
-
 				"admin": isAdmin
 			});
 			user[dataFieldName]!.id = profile.id;

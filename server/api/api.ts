@@ -25,12 +25,12 @@ export function authenticate(
 }
 
 export async function user(
-	params: { token: string },
-	request: express.Request
+	params: { token: string }
 ): Promise<{
 	id: string;
 	email: string;
 	email_verified: boolean;
+	admin: boolean;
 	name: string;
 } | undefined> {
 	const session = await Session.findOne({ "_id": params.token });
@@ -49,6 +49,27 @@ export async function user(
 		id: account._id,
 		email: account.email,
 		email_verified: account.verifiedEmail,
+		admin: account.admin || false,
 		name: account.name
 	};
 }
+
+export async function is_admin(
+	params: { token: string; email: string; admin: boolean },
+	request: express.Request
+) {
+	// Authenticate
+	const account = await user({ token: params.token });
+	if (!account || !account.admin) {
+		return undefined;
+	}
+
+	// Set admin status
+	const updated = await User.update({
+		email: params.email
+	}, {
+		admin: params.admin
+	});
+	return updated.n > 0 ? params.admin : undefined;
+}
+

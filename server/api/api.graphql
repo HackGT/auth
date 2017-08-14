@@ -1,6 +1,6 @@
 interface Auth {
-  user(token: ID): User
-  authenticate(callback: String): String!
+  user(token: ID!): User
+  authenticate(callback: String!): String!
   logout: String!
 }
 
@@ -8,15 +8,21 @@ type User {
   id: ID!
   email: String!
   email_verified: Boolean!
+  admin: Boolean!
   name: String
 }
 
 type Query implements Auth {
-  user(token: ID): User
-  authenticate(callback: String): String!
+  user(token: ID!): User
+  authenticate(callback: String!): String!
   logout: String!
+}
+
+type Mutation {
+  is_admin(token: ID!, email: String!, admin: Boolean!): Boolean
 }
 
 schema {
   query: Query
+  mutation: Mutation
 }
