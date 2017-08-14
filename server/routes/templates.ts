@@ -63,6 +63,7 @@ templateRoutes.route("/login").get((request, response) => {
 	const ssoAuth = request.cookies["sso-auth"];
 	if (request.isAuthenticated() && ssoAuth === request.sessionID) {
 		response.redirect("/success");
+		return;
 	}
 
 	let templateData: ILoginTemplate = {
