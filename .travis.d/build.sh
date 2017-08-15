@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-# HACKGPROJECT VERSION: 302160909a4f927434ad22a9e372242e15648e7c
+# HACKGPROJECT VERSION: fc938d913ccd100e54e9f3d1fe27d5d3dc9c5046
 set -euo pipefail
 PROJECT_TYPE="deployment"
-ORG_NAME="hackgt"
+ORG_NAME_CASE_PRESERVE="HackGT"
+ORG_NAME=$(echo "${ORG_NAME}" | tr '[:upper:]' '[:lower:]')
 SOURCE_DIR=$(readlink -f "${BASH_SOURCE[0]}")
 SOURCE_DIR=$(dirname "$SOURCE_DIR")
 cd "${SOURCE_DIR}/.."
