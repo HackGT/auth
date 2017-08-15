@@ -29,7 +29,11 @@ app.use(cookieParserInstance);
 app.use(flash());
 
 // Auth needs to be the first route configured or else requests handled before it will always be unauthenticated
-import {authRoutes} from "./routes/auth";
+import {
+	authRoutes,
+	validateAndCacheHostName
+} from "./routes/auth";
+
 app.use("/auth", authRoutes);
 
 // User facing routes
@@ -49,6 +53,8 @@ app.route("/version").get((request, response) => {
 //
 const schema = buildSchema(fs.readFileSync(
 	path.resolve(__dirname, "./api/api.graphql"), "utf8"));
+// Since we might be returning a link to ourselves, validate the hostname
+app.use("/graphql", validateAndCacheHostName);
 app.use("/graphql", graphql({
 	schema,
 	rootValue: graphql_root,
