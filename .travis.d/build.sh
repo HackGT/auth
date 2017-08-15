@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# HACKGPROJECT VERSION: fc938d913ccd100e54e9f3d1fe27d5d3dc9c5046
+# HACKGPROJECT VERSION: 0d95493d7fc0c581e2e6c346d806df9f2c117c73
 set -euo pipefail
 PROJECT_TYPE="deployment"
 ORG_NAME_CASE_PRESERVE="HackGT"
-ORG_NAME=$(echo "${ORG_NAME}" | tr '[:upper:]' '[:lower:]')
+ORG_NAME=$(echo "${ORG_NAME_CASE_PRESERVE}" | tr '[:upper:]' '[:lower:]')
 SOURCE_DIR=$(readlink -f "${BASH_SOURCE[0]}")
 SOURCE_DIR=$(dirname "$SOURCE_DIR")
 cd "${SOURCE_DIR}/.."
@@ -89,7 +89,7 @@ trigger_biodomes_build() {
          -H "Travis-API-Version: 3" \
          -H "Authorization: token ${TRAVIS_TOKEN}" \
          -d "$body" \
-         https://api.travis-ci.org/repo/${ORG_NAME}%2Fbiodomes/requests
+         https://api.travis-ci.org/repo/${ORG_NAME_CASE_PRESERVE}%2Fbiodomes/requests
 }
 
 install_jekyll() {
