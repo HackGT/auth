@@ -23,8 +23,13 @@ type Query implements Auth {
   # Look up the current user by his or her token, or if this is an admin
   # token look up a user by his or her ID.
   user(token: ID!, id: ID): User
+
+  # Search through a user's name and email through regex (admin only)
+  search_user(token: ID!, search: String!, offset: Int!, n: Int!): [User]!
+
   # Provide a URL to authenticate with that redirects to the specified callback.
   authenticate(callback: String!): String!
+
   # Provide a URL to logout with
   logout: String!
 }

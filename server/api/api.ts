@@ -1,6 +1,6 @@
 import * as express from "express";
 
-import { Session, User } from "../schema";
+import { Session, User, IUser } from "../schema";
 
 function safe_parse(json: string): any {
 	try {
@@ -8,6 +8,14 @@ function safe_parse(json: string): any {
 	} catch (e) {
 		return;
 	}
+}
+
+interface IGraphQLUser {
+	id: string;
+	email: string;
+	email_verified: boolean;
+	admin: boolean;
+	name: string;
 }
 
 export function logout(params: undefined, request: express.Request): string {
@@ -24,15 +32,38 @@ export function authenticate(
 	return `${proto}://${request.headers.host}/login?callback=${callback}`;
 }
 
+export async function search_user(
+	params: { token: string; search: string; offset: number; n: number }
+): Promise<IGraphQLUser[]> {
+	const viewer = await user({ token: params.token });
+	if (!viewer || !viewer.admin) {
+		return [];
+	}
+
+	const results = await User
+		.find({
+			$text: {
+				$search: params.search
+			}
+		}, {
+			score : {
+				$meta: "textScore"
+			}
+		})
+		.sort({
+			score: {
+				$meta: "textScore"
+			}
+		})
+		.skip(params.offset)
+		.limit(params.n);
+
+	return results.map(userToGraphQL);
+}
+
 export async function user(
-	params: { token: string; id: string | null }
-): Promise<{
-	id: string;
-	email: string;
-	email_verified: boolean;
-	admin: boolean;
-	name: string;
-} | undefined> {
+	params: { token: string; id?: string }
+): Promise<IGraphQLUser | undefined> {
 	const session = await Session.findOne({ "_id": params.token });
 	if (!session || !session.session || !session.expires) return undefined;
 
@@ -57,13 +88,7 @@ export async function user(
 		}
 	}
 
-	return {
-		id: target._id,
-		email: target.email,
-		email_verified: target.verifiedEmail,
-		admin: target.admin || false,
-		name: target.name
-	};
+	return userToGraphQL(target);
 }
 
 export async function is_admin(
@@ -71,7 +96,7 @@ export async function is_admin(
 	request: express.Request
 ) {
 	// Authenticate
-	const account = await user({ token: params.token, id: null });
+	const account = await user({ token: params.token });
 	if (!account || !account.admin) {
 		return undefined;
 	}
@@ -83,5 +108,15 @@ export async function is_admin(
 		admin: params.admin
 	});
 	return updated.n > 0 ? params.admin : undefined;
+}
+
+function userToGraphQL(account: IUser): IGraphQLUser  {
+	return {
+		id: account._id.toHexString(),
+		email: account.email,
+		email_verified: account.verifiedEmail,
+		admin: account.admin || false,
+		name: account.name
+	};
 }
 

@@ -83,9 +83,13 @@ export const User = mongoose.model<IUserMongoose>("User", new mongoose.Schema({
 	email: {
 		type: String,
 		required: true,
+		index: true,
 		unique: true
 	},
-	name: String,
+	name: {
+		type: String,
+		index: true
+	},
 	verifiedEmail: Boolean,
 
 	localData: {
@@ -109,6 +113,9 @@ export const User = mongoose.model<IUserMongoose>("User", new mongoose.Schema({
 	},
 
 	admin: Boolean
+}).index({
+	email: 'text',
+	name: 'text'
 }));
 
 export interface ISetting {
