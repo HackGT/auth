@@ -25,7 +25,7 @@ export function authenticate(
 }
 
 export async function user(
-	params: { token: string }
+	params: { token: string; id: string | null }
 ): Promise<{
 	id: string;
 	email: string;
@@ -45,12 +45,24 @@ export async function user(
 	const account = await User.findById(data.passport.user);
 	if (!account) return undefined;
 
+	let target = account;
+	if (params.id && params.id !== account._id) {
+		if (account.admin) {
+			const other = await User.findById(params.id);
+			if (!other) return undefined;
+			target = other;
+		}
+		else {
+			return undefined;
+		}
+	}
+
 	return {
-		id: account._id,
-		email: account.email,
-		email_verified: account.verifiedEmail,
-		admin: account.admin || false,
-		name: account.name
+		id: target._id,
+		email: target.email,
+		email_verified: target.verifiedEmail,
+		admin: target.admin || false,
+		name: target.name
 	};
 }
 
@@ -59,7 +71,7 @@ export async function is_admin(
 	request: express.Request
 ) {
 	// Authenticate
-	const account = await user({ token: params.token });
+	const account = await user({ token: params.token, id: null });
 	if (!account || !account.admin) {
 		return undefined;
 	}
