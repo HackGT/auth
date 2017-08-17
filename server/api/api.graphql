@@ -4,21 +4,34 @@ interface Auth {
   logout: String!
 }
 
+# The basic user type
 type User {
+  # The user's ID, this should be consistent within all nodes
   id: ID!
+  # The user's email address
   email: String!
+  # If the user's email has been verified
   email_verified: Boolean!
+  # If the user is an administrator
   admin: Boolean!
+  # If the user's human-readable full name
   name: String
 }
 
+# The root query type, home of all queries.
 type Query implements Auth {
-  user(token: ID!): User
+  # Look up the current user by his or her token, or if this is an admin
+  # token look up a user by his or her ID.
+  user(token: ID!, id: ID): User
+  # Provide a URL to authenticate with that redirects to the specified callback.
   authenticate(callback: String!): String!
+  # Provide a URL to logout with
   logout: String!
 }
 
+# The root mutation type, home of all mutations.
 type Mutation {
+  # Set the admin flag on a user, can only be done by admins.
   is_admin(token: ID!, email: String!, admin: Boolean!): Boolean
 }
 
