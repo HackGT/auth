@@ -3,9 +3,10 @@
   "version": "1.2.1",
   "description": "TBD",
   "main": "server/app.js",
+  "types": "./index.d.ts",
   "scripts": {
     "test": "echo Error: no test specified && exit 1",
-    "build": "./node_modules/tslint/bin/tslint -p server/ && ./node_modules/typescript/bin/tsc -p server/",
+    "build": "./node_modules/tslint/bin/tslint -p server/ && ./node_modules/typescript/bin/tsc -p server/ && ./node_modules/tslint/bin/tslint -p scripts/ && ./node_modules/typescript/bin/tsc -p scripts/ && node scripts/gen-types.js",
     "start": "node server/app.js",
     "build-start": "npm run build && npm start"
   },
@@ -54,6 +55,9 @@
     "striptags": "^3.0.1"
   },
   "devDependencies": {
+    "@gql2ts/from-schema": "^1.1.2",
+    "@gql2ts/types": "^1.1.2",
+    "@gql2ts/util": "^1.1.2",
     "@types/body-parser": "1.16.0",
     "@types/chai": "^3.4.35",
     "@types/cheerio": "^0.22.2",
