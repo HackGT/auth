@@ -404,6 +404,7 @@ authRoutes.post("/signup", validateAndCacheHostName, postParser, passport.authen
 authRoutes.post(
 	"/login",
 	postParser,
+	validateAndCacheHostName,
 	passport.authenticate("local", {
 		failureRedirect: "/login",
 		failureFlash: true
